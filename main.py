@@ -1,28 +1,35 @@
 from KarelInput import KarelInputCase, Orientation, EvalFlags, WallFlags, Point
+from KarelOutput import KarelOutputCase
 
 
-case = KarelInputCase(
-    width=30, 
-    height=70, 
-    beeperBag=14,
-    start_x=1, 
-    start_y=2, 
-    orientation=Orientation.SOUTH,
-    evaluationFlags=EvalFlags.BEEPERBAG | EvalFlags.ORIENTATION
+def writeCase(A, B, name):
+    case = KarelInputCase(
+        beeperBag=-1,
+        evaluationFlags=EvalFlags.POSITION
     )
 
-print(Orientation.SOUTH.value[0])
+    case.placeBeepers(Point(1, 1), A)
+    case.placeBeepers(Point(2, 1), B)
+    case.dumpCell(Point(1, 1))
+    case.dumpCell(Point(2, 1))
 
-case.placeBeepers(Point(5,8), 10)
+    case.write(f"{name}.in", True)
 
-case.toggleWall(Point(3,4), WallFlags.ALL )
-case.toggleWall(Point(4,4), WallFlags.ALL )
-case.toggleWall(Point(5,4), WallFlags.ALL )
-case.toggleWall(Point(5,3), WallFlags.ALL )
+    output = KarelOutputCase()
 
-case.dumpCell(Point(5,3))
-
-
-case.write("output.in", True)
+    output.setBeepers(Point(1, 1), A)
+    output.setBeepers(Point(2, 1), B)
+    output.setPosition(Point(1,1) if A > B else Point(2,1))
+    output.write(f"{name}.out", format=True, input=case)
 
 
+numbers=[
+    (8,12),
+    (1,2),
+    (10,40),
+    (100,1),
+    (100,99)
+    ]
+for i, (A, B) in enumerate(numbers):
+    writeCase(A, B, f"bin/c{i}.a")
+    writeCase(B, A, f"bin/c{i}.b")

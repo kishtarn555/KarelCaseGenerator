@@ -16,7 +16,6 @@ class KarelInputCase:
     ):
         self.width: int = width
         self.height:int = height
-        self.beepers:int = beeperBag
         self.karel_x:int = start_x
         self.karel_y:int = start_y
         self.karel_orientation: Orientation = orientation
@@ -141,6 +140,13 @@ class KarelInputCase:
                     pared.set("y1", f"{y}")
                     pared.set("x2", f"{x}")
 
+        for x in range(1, self.width+1):
+            for y in range(1, self.height+1):
+                if self.dumpCells[x][y]:
+                    dump = ET.SubElement(mundo, "posicionDump")
+                    dump.set("x", f"{x}")
+                    dump.set("y", f"{y}")
+
     
     def _buildProgramXML(self, programasNode):
         programa = ET.SubElement(programasNode, "programa")
@@ -175,12 +181,14 @@ class KarelInputCase:
         if (self.evaluationFlags & EvalFlags.ALLBEEPERS):
             despliega("UNIVERSO")
 
-        for x in range(1, self.width+1):
-            for y in range(1, self.height+1):
-                if self.dumpCells[x][y]:
-                    dump = ET.SubElement(programa, "posicionDump")
-                    dump.set("x", f"{x}")
-                    dump.set("y", f"{y}")
+        flag =False
+        for rows in self.dumpCells:
+            for vals in self.dumpCells:
+                flag = flag or vals
+        if flag:
+            despliega("MUNDO")
+
+        
 
 
     def write(self, path: str, format:bool = False):
