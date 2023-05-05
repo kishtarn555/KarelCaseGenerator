@@ -1,35 +1,29 @@
 from KarelInput import KarelInputCase, Orientation, EvalFlags, WallFlags, Point
 from KarelOutput import KarelOutputCase
+import random
 
 
-def writeCase(A, B, name):
+def writeCase(n, name):
     case = KarelInputCase(
         beeperBag=-1,
-        evaluationFlags=EvalFlags.POSITION
+        start_x=1,
+        start_y=1,
+        evaluationFlags= EvalFlags.ALLBEEPERS
     )
 
-    case.placeBeepers(Point(1, 1), A)
-    case.placeBeepers(Point(2, 1), B)
-    case.dumpCell(Point(1, 1))
-    case.dumpCell(Point(2, 1))
+    
 
     case.write(f"{name}.in", True)
 
     output = KarelOutputCase()
 
-    output.setBeepers(Point(1, 1), A)
-    output.setBeepers(Point(2, 1), B)
-    output.setPosition(Point(1,1) if A > B else Point(2,1))
     output.write(f"{name}.out", format=True, input=case)
 
 
-numbers=[
-    (8,12),
-    (1,2),
-    (10,40),
-    (100,1),
-    (100,99)
-    ]
-for i, (A, B) in enumerate(numbers):
-    writeCase(A, B, f"bin/c{i}.a")
-    writeCase(B, A, f"bin/c{i}.b")
+sizes = [3, 5, 8, 9, 13, 
+        99, 55, 34, 59, 80, 
+        10, 22, 14, 60, 29, 
+        40, 89, 79, 89, 7]
+
+for i, n in enumerate(sizes):
+    writeCase(n, f"./bin/case{i}")

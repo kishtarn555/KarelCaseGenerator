@@ -127,33 +127,51 @@ class KarelOutputCase:
 
         return ET.ElementTree(resultados)
 
-    #FIXME: This implementation breaks if there beepers in any row are not contiguous
     def _buildBeepersXML(self, mundo):
         prevRow = -1
         prevCol = -1
-        currentCol=[]
+        currentRow=[]
+        currentGroup=[]
+        startX = -1
 
         def drawBeeperline():
             linea = ET.SubElement(mundo, "linea")
             linea.set("fila", f"{prevRow}")
             linea.set("compresionDeCeros", f"true")
-            linea.text = (
-                f"({prevCol - len(currentCol)+1}) "
-                + "".join([f"{val} " for val in currentCol])
-            )
+            text = [
+                f"({group[0]}) "
+                + "".join([f"{val} " for val in group[1]])
+                for group in currentRow
+            ]
+            text = "".join(text)
+            linea.text = text
             
                     
-        for coords in sorted(self.beepers.keys(), key=lambda k:(k.y, k.x)):
+        for coords in sorted(self.beepers.keys(), key=lambda k:(-k.y, k.x)):
             value = self.beepers[coords]
-            if prevRow != coords.y or prevCol+1 != coords.x:
-                if len(currentCol)!=0:
+            if prevRow != coords.y:
+                if len(currentGroup)!=0:
+                    currentRow.append((startX, currentGroup))
+                if len(currentRow)!=0:
                     drawBeeperline()
-                    currentCol=[]            
+                currentRow=[]                
+                currentGroup=[]
+            
+            if prevCol+1 != coords.x:
+                if len(currentGroup)!=0:
+                    currentRow.append((startX, currentGroup))
+                currentGroup = []
+                startX = coords.x
+
             prevRow = coords.y
             prevCol = coords.x
-            currentCol.append(value)
+            currentGroup.append(value)
 
-        if len(currentCol)!=0:
+        
+        if len(currentGroup)!=0:
+            currentRow.append((startX, currentGroup))
+
+        if len(currentRow)!=0:
             drawBeeperline()
 
 
