@@ -160,7 +160,7 @@ class KarelInputCase:
         
         programa.set(
             "direccionKarel", 
-            f"{ORIENTATION_DECODE[self.karel_orientation.value[0]]}"
+            f"{ORIENTATION_DECODE[self.karel_orientation.value]}"
         ) 
         programa.set(
             "mochilaKarel", 
