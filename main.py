@@ -13,10 +13,10 @@ def writeCase(n, name):
 
     
 
-    case.write(f"{name}.in", True)
 
     output = KarelOutputCase()
 
+    case.write(f"{name}.in", True)
     output.write(f"{name}.out", format=True, input=case)
 
 
@@ -25,5 +25,5 @@ sizes = [3, 5, 8, 9, 13,
         10, 22, 14, 60, 29, 
         40, 89, 79, 89, 7]
 
-for i, n in enumerate(sizes):
-    writeCase(n, f"./bin/case{i}")
+# for i, n in enumerate(sizes):
+#     writeCase(n, f"./bin/case{i}")
