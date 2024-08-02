@@ -227,7 +227,7 @@ class KarelInputCase:
         
 
 
-    def write(self, path: str, format:bool = False):
+    def write(self, path: str, format:bool = True):
         xml = self.toXML()
         if (format):
             ET.indent(xml, space="\t", level=0)
