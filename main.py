@@ -1,5 +1,6 @@
-from KarelInput import KarelInputCase, Orientation, EvalFlags, WallFlags, Point
-from KarelOutput import KarelOutputCase
+
+from KarelGenerator.KarelInput import KarelInputCase, Orientation, EvalFlags, WallFlags, Point
+from KarelGenerator.KarelOutput import KarelOutputCase
 import random
 
 
