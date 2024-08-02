@@ -1,6 +1,19 @@
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple
 import xml.etree.ElementTree as ET
 from .KarelUtil import *
+from dataclasses import dataclass
+
+@dataclass(kw_only=True, frozen=True)
+class ExecutionLimits:
+    instruction_limit:int = 10_000_000
+    stack_size:int = 65_000
+    move_limit:int = -1
+    left_limit:int = -1
+    leave_limit:int = -1
+    pick_limit:int = -1
+
+
+
 
 class KarelInputCase:
     def __init__(
@@ -11,6 +24,7 @@ class KarelInputCase:
             beeperBag:int = 0,
             start_x:int = 1,
             start_y:int = 1,
+            limits:Optional[ExecutionLimits] = None,
             orientation: Orientation = Orientation.NORTH,
             evaluationFlags: int = 0
     ):
@@ -20,11 +34,16 @@ class KarelInputCase:
         self.karel_y:int = start_y
         self.karel_orientation: Orientation = orientation
         self.karel_beepers: int = beeperBag
+        self.limits: ExecutionLimits = ExecutionLimits()
 
         self.beepers : Dict[Point: int] = {}
         self.evaluationFlags: int = evaluationFlags
         self.walls = [[0]*(height+1) for _ in range(width+1)]
         self.dumpCells =[[False]*(height+1) for _ in range(width+1)]
+        if limits is not None:
+            self.limits = limits
+
+            
 
     def placeBeepers(self,coords: Point, ammount:int)-> None:
         self.beepers[coords] = ammount
@@ -94,8 +113,8 @@ class KarelInputCase:
         ejecucion = ET.Element("ejecucion")
 
         condiciones = ET.SubElement(ejecucion, "condiciones") # <condiciones instruccionesMaximasAEjecutar="10000000" longitudStack="65000"></condiciones>
-        condiciones.set("instruccionesMaximasAEjecutar", "10000000") # TODO: Add a setting for this
-        condiciones.set("longitudStack", "65000") # TODO: Add a setting for this
+        condiciones.set("instruccionesMaximasAEjecutar", f"{self.limits.instruction_limit}")
+        condiciones.set("longitudStack", f"{self.limits.stack_size}") 
 
         mundos = ET.SubElement(ejecucion, "mundos")
 
