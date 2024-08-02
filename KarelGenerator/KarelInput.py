@@ -116,6 +116,8 @@ class KarelInputCase:
         condiciones.set("instruccionesMaximasAEjecutar", f"{self.limits.instruction_limit}")
         condiciones.set("longitudStack", f"{self.limits.stack_size}") 
 
+        self._buildConditions(condiciones)
+
         mundos = ET.SubElement(ejecucion, "mundos")
 
         self._buildWorldXML(mundos)
@@ -129,6 +131,21 @@ class KarelInputCase:
 
         return ET.ElementTree(ejecucion)
     
+    def _buildConditions(self, condiciones:ET.Element):
+        if self.limits.leave_limit != -1:
+            self._buildCondition(condiciones, "DEJA_ZUMBADOR", self.limits.leave_limit)
+        if self.limits.pick_limit != -1:
+            self._buildCondition(condiciones, "COGE_ZUMBADOR", self.limits.pick_limit)
+        if self.limits.move_limit != -1:
+            self._buildCondition(condiciones, "AVANZA", self.limits.move_limit)
+        if self.limits.left_limit != -1:
+            self._buildCondition(condiciones, "GIRA_IZQUIERDA", self.limits.left_limit)
+
+    def _buildCondition(self, condiciones:ET.Element, name:str, value:int):
+        comando = ET.SubElement(condiciones, "comando")
+        comando.set("nombre", name)
+        comando.set("maximoNumeroDeEjecuciones", f"{value}")
+
     def _buildWorldXML(self, mundos):        
         mundo = ET.SubElement(mundos, "mundo")
         mundo.set("nombre", "mundo_0")
