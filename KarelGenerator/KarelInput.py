@@ -1,6 +1,6 @@
 from typing import Dict, Tuple
 import xml.etree.ElementTree as ET
-from KarelUtil import *
+from .KarelUtil import *
 
 class KarelInputCase:
     def __init__(

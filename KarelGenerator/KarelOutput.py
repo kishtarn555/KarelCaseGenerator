@@ -1,6 +1,6 @@
 from typing import Dict, List
-from KarelInput import KarelInputCase
-from KarelUtil import *
+from .KarelInput import KarelInputCase
+from .KarelUtil import *
 import io
 
 
