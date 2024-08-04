@@ -49,6 +49,7 @@ class KarelOutputCase:
         beeperBag:bool=True,
         worldBeepers:bool=False,
     ):
+        """Copies values from an input case"""
         if orientation:
             self.karel_orientation = input.karel_orientation
         if position:
@@ -60,10 +61,12 @@ class KarelOutputCase:
             self.beepers = input.beepers.copy()
 
     def cleanValues(self, input:KarelInputCase):
+        """Cleans values that are not evaluated or dumped based on the settings in a input"""
         self.cleanKarelValues(input.evaluationFlags)
         self.cleanBeepers(input.evaluationFlags, input.dumpCells)
 
     def cleanKarelValues(self, evaluationFlags: EvalFlags):
+        """Cleans Karel final values that are not evaluated"""
         if (evaluationFlags & EvalFlags.BEEPERBAG)==0:
             self.karel_beepers = None
         if (evaluationFlags & EvalFlags.ORIENTATION)==0:
@@ -73,6 +76,14 @@ class KarelOutputCase:
             self.karel_y = None
 
     def cleanBeepers(self,  evaluationFlags: EvalFlags, dumpCells: List[List[bool]]) ->None:
+        """
+            Removes zero value beepers and beepers that are not set to be dumped.
+        """        
+        self.beepers = {
+            coord : value
+            for coord, value in self.beepers.items()
+            if (value != 0)
+        }
         if (evaluationFlags & EvalFlags.ALLBEEPERS)!=0:
             return
         self.beepers = {
@@ -177,6 +188,13 @@ class KarelOutputCase:
 
 
     def write(self, path:str, *, format:bool=True, input:KarelInputCase = None):
+        """
+        Writes the case to an xml file
+
+        :param str path: The file path to write
+        :param str format: Adds newlines and indentation
+        :param KarelInputCase input: If given, it removes extra data that the input doesn't have set to dump
+        """
         xml = self.toXML(input)
         if (format):
             ET.indent(xml, space="\t", level=0)
