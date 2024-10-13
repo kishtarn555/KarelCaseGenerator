@@ -7,6 +7,8 @@ from dataclasses import dataclass
 class ExecutionLimits:
     instruction_limit:int = 10_000_000
     stack_size:int = 65_000
+    stack_memory:int = 65_000
+    parameter_limit:int = 5
     move_limit:int = -1
     left_limit:int = -1
     leave_limit:int = -1
@@ -115,6 +117,8 @@ class KarelInputCase:
         condiciones = ET.SubElement(ejecucion, "condiciones") # <condiciones instruccionesMaximasAEjecutar="10000000" longitudStack="65000"></condiciones>
         condiciones.set("instruccionesMaximasAEjecutar", f"{self.limits.instruction_limit}")
         condiciones.set("longitudStack", f"{self.limits.stack_size}") 
+        condiciones.set("memoriaStack", f"{self.limits.stack_memory}") 
+        condiciones.set("llamadaMaxima", f"{self.limits.parameter_limit}") 
 
         self._buildConditions(condiciones)
 
