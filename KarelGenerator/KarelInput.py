@@ -47,10 +47,16 @@ class KarelInputCase:
 
             
 
-    def placeBeepers(self,coords: Point, ammount:int)-> None:
-        self.beepers[coords] = ammount
+    def placeBeepers(self,coords: Point, amount:int)-> None:
+        """Sets the number of beepers at a given."""
+        self.beepers[coords] = amount
 
     def placeWall(self, coords: Point, walls:int) -> None:
+        """At a cell, it adds walls, and it updates the corresponding neighbor.
+
+        :param Point coords: Coordinates of the cell to place
+        :param int walls: Wall byte mask to add.
+        """
         if coords.x!=1 and (walls & WallFlags.LEFT):
             self.walls[coords.x][coords.y] |= WallFlags.LEFT
             self.walls[coords.x-1][coords.y] |= WallFlags.RIGHT
@@ -68,6 +74,11 @@ class KarelInputCase:
             self.walls[coords.x][coords.y+1] |= WallFlags.DOWN
 
     def removeWall(self, coords: Point, walls:int) -> None:
+        """It removes the walls from a cell, and it's corresponding neighbor.
+        
+        :param Point coords: coordinates of the target cell
+        :param int walls: wall byte-mask, it removes all walls that are set in the mask
+        """
         if coords.x!=1 and (walls & WallFlags.LEFT):
             self.walls[coords.x][coords.y] &= ~WallFlags.LEFT
             self.walls[coords.x-1][coords.y] &= ~WallFlags.RIGHT
@@ -86,6 +97,11 @@ class KarelInputCase:
             
 
     def toggleWall(self, coords: Point, walls:int) -> None:
+        """It alternates the walls at the target cell and its neighbor.
+        
+        :param Point coords: coordinates of the target cell
+        :param int walls: wall byte-mask, it toggles all walls that are set in the mask
+        """
         if coords.x!=1 and (walls & WallFlags.LEFT):
             self.walls[coords.x][coords.y] ^= WallFlags.LEFT
             self.walls[coords.x-1][coords.y] ^= WallFlags.RIGHT
@@ -103,15 +119,22 @@ class KarelInputCase:
             self.walls[coords.x][coords.y+1] ^= WallFlags.DOWN
             
     def dumpCell(self, coords:Tuple[int,int])->None:
+        """It sets a cell to be dumped."""
         self.dumpCells[coords.x][coords.y] = True
     
     def ignoreCell(self, coords:Tuple[int,int])->None:
+        """It sets a cell to not be dumped."""
         self.dumpCells[coords.x][coords.y] = False
     
     def ToggleDumpCell(self, coords:Tuple[int,int])->None:
+        """It alternates if the cell will be dumped or not."""
         self.dumpCells[coords.x][coords.y] = not self.dumpCells[coords.x][coords.y]
 
     def toXML(self):
+        """Converts the world to an XML
+
+        :rtype: ElementTree
+        """
         ejecucion = ET.Element("ejecucion")
 
         condiciones = ET.SubElement(ejecucion, "condiciones") # <condiciones instruccionesMaximasAEjecutar="10000000" longitudStack="65000"></condiciones>
@@ -228,10 +251,12 @@ class KarelInputCase:
         if flag:
             despliega("MUNDO")
 
-        
-
-
     def write(self, path: str, format:bool = True):
+        """Writes the XML representation to a file.
+
+        :param str path:  location of the file to write
+        :param bool format: if true, it ands indentation, defaults to True
+        """
         xml = self.toXML()
         if (format):
             ET.indent(xml, space="\t", level=0)
