@@ -1,6 +1,7 @@
 from typing import Dict, List
 from .KarelInput import KarelInputCase
 from .KarelUtil import *
+from .numerics import isInfinite
 import io
 
 
@@ -137,6 +138,12 @@ class KarelOutputCase:
 
 
         return ET.ElementTree(resultados)
+    
+    def _getOutputBeeperFormatted(number: int)->str:
+        if isInfinite(number):
+            return f"{0xFFFF}"
+        return f"{(number & 0xFFFF)}"
+    
 
     def _buildBeepersXML(self, mundo):
         prevRow = -1
@@ -144,14 +151,13 @@ class KarelOutputCase:
         currentRow=[]
         currentGroup=[]
         startX = -1
-
         def drawBeeperline():
             linea = ET.SubElement(mundo, "linea")
             linea.set("fila", f"{prevRow}")
             linea.set("compresionDeCeros", f"true")
             text = [
-                f"({group[0]}) "
-                + "".join([f"{val} " for val in group[1]])
+                f"({self._getOutputBeeperFormatted(group[0])}) "
+                + "".join([f"{self._getOutputBeeperFormatted(val)} " for val in group[1]])
                 for group in currentRow
             ]
             text = "".join(text)
