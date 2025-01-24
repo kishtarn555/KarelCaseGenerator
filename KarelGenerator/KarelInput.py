@@ -2,7 +2,7 @@ from typing import Dict, Optional, Tuple
 import xml.etree.ElementTree as ET
 from .KarelUtil import *
 from dataclasses import dataclass
-
+from .constants import TargetVersion
 @dataclass(kw_only=True, frozen=True)
 class ExecutionLimits:
     instruction_limit:int = 10_000_000
@@ -28,7 +28,8 @@ class KarelInputCase:
             start_y:int = 1,
             limits:Optional[ExecutionLimits] = None,
             orientation: Orientation = Orientation.NORTH,
-            evaluationFlags: int = 0
+            evaluationFlags: int = 0,
+            target_version: TargetVersion = "1.0"
     ):
         self.width: int = width
         self.height:int = height
@@ -44,6 +45,7 @@ class KarelInputCase:
         self.dumpCells =[[False]*(height+1) for _ in range(width+1)]
         if limits is not None:
             self.limits = limits
+        self.target_version = target_version
 
             
 
@@ -136,7 +138,7 @@ class KarelInputCase:
         :rtype: ElementTree
         """
         ejecucion = ET.Element("ejecucion")
-
+        ejecucion.set("version", self.target_version)
         condiciones = ET.SubElement(ejecucion, "condiciones") # <condiciones instruccionesMaximasAEjecutar="10000000" longitudStack="65000"></condiciones>
         condiciones.set("instruccionesMaximasAEjecutar", f"{self.limits.instruction_limit}")
         condiciones.set("longitudStack", f"{self.limits.stack_size}") 

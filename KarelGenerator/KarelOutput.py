@@ -3,6 +3,7 @@ from .KarelInput import KarelInputCase
 from .KarelUtil import *
 from .numerics import isInfinite
 import io
+from .constants import TargetVersion
 
 
 import xml.etree.ElementTree as ET
@@ -21,15 +22,16 @@ class KarelOutputCase:
         beeperBag=None,
         end_x=None,
         end_y=None,
-        orientation:Orientation=None
+        orientation:Orientation=None,
+        target_version: TargetVersion = "1.0"
     ):
         self.orientation:Orientation = Orientation.NORTH
         self.karel_x:int = end_x
         self.karel_y:int = end_y
         self.karel_orientation: Orientation = orientation
         self.karel_beepers: int = beeperBag
-
         self.beepers:Dict[Point, int]={}
+        self.target_version = target_version
 
     def setBeepers(self, coords:Point, ammount:int):
         self.beepers[coords] = ammount
@@ -49,6 +51,7 @@ class KarelOutputCase:
         orientation:bool=True,
         beeperBag:bool=True,
         worldBeepers:bool=False,
+        target_version:bool=True
     ):
         """Copies values from an input case"""
         if orientation:
@@ -60,11 +63,14 @@ class KarelOutputCase:
             self.karel_beepers = input.karel_beepers
         if worldBeepers:
             self.beepers = input.beepers.copy()
+        if target_version:
+            self.target_version = input.target_version
 
     def cleanValues(self, input:KarelInputCase):
-        """Cleans values that are not evaluated or dumped based on the settings in a input"""
+        """Cleans values that are not evaluated or dumped based on the settings in a input and set the correct target version"""
         self.cleanKarelValues(input.evaluationFlags)
         self.cleanBeepers(input.evaluationFlags, input.dumpCells)
+        self.target_version = input.target_version
 
     def cleanKarelValues(self, evaluationFlags: EvalFlags):
         """Cleans Karel final values that are not evaluated"""
@@ -139,10 +145,12 @@ class KarelOutputCase:
 
         return ET.ElementTree(resultados)
     
-    def _getOutputBeeperFormatted(number: int)->str:
+    def _getOutputBeeperFormatted(self, number: int)->str:
         if isInfinite(number):
             return f"{0xFFFF}"
-        return f"{(number & 0xFFFF)}"
+        if self.target_version == "1.0":
+            return f"{(number & 0xFFFF)}"
+        return f"{number}"
     
 
     def _buildBeepersXML(self, mundo):
