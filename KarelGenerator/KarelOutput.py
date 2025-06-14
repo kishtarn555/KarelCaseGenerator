@@ -182,7 +182,7 @@ class KarelOutputCase:
                 currentRow=[]                
                 currentGroup=[]
             
-            if prevCol+1 != coords.x:
+            if prevCol+1 != coords.x or prevRow != coords.y:
                 if len(currentGroup)!=0:
                     currentRow.append((startX, currentGroup))
                 currentGroup = []
